@@ -87,6 +87,7 @@ const Home = () => {
     console.log("Creating bet")
   }
 
+  const {allBets,createBet} = useGlobalState();
   return (
     <div className={styles.wrapper}>
       <Header />
@@ -215,12 +216,12 @@ const Home = () => {
                 }${" bg-[#ef4b09] w-1/4 text-center mt-8 self-center"}`}
               onClick={(e) => {
                 e.preventDefault()
-                // createBet(
-                //   new BN(Number(sol) * LAMPORTS_PER_SOL), // bet amount in lamports(10^-9 SOL)
-                //   Number(guess), // prediction price
-                //   Number(time), // duration in seconds
-                //   new PublicKey(priceKey) // pythPriceKey
-                // )
+                 createBet(
+                   new BN(Number(sol) * LAMPORTS_PER_SOL), // bet amount in lamports(10^-9 SOL)
+                   Number(guess), // prediction price
+                   Number(time), // duration in seconds
+                   new PublicKey(priceKey) // pythPriceKey
+                 )
                 staticCreatebet()
               }
               }

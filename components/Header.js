@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import Image from "next/image";
 import { AiOutlineSearch } from "react-icons/ai";
-
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const styles = {
   container: "flex w-screen h-16 bg-black px-24 py-3 mb-5 fixed",
@@ -32,8 +32,8 @@ const Header = () => {
       <div className={styles.rightHeader}>
         <div className={styles.menuItem}>Rewards</div>
         <div className={styles.menuItem}>Portfolio</div>
-        <div className={styles.menuItem}>Connect Wallet</div>
-      </div>
+        <WalletMultiButton className={styles.menuItem}/>
+       </div>
     </div>
   );
 };
