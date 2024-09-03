@@ -88,6 +88,7 @@ const Home = () => {
   }
 
   const {allBets,createBet} = useGlobalState();
+  console.log(createBet);
   return (
     <div className={styles.wrapper}>
       <Header />
@@ -222,7 +223,6 @@ const Home = () => {
                    Number(time), // duration in seconds
                    new PublicKey(priceKey) // pythPriceKey
                  )
-                staticCreatebet()
               }
               }
             />

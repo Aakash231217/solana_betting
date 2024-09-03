@@ -12,6 +12,7 @@ export const GlobalContext=createContext({
     hasUserAccount:null,
     allBets:null,
     fetchBets:null,
+    createBet:null,
 
 
 })
@@ -28,7 +29,7 @@ export const GlobalState = ({children})=>{
     //setProgram
 
     useEffect(()=>{
-        if(connection){
+        if(connection && wallet){
             setProgram(getProgram(connection,wallet ?? {}));
         }
         else{
@@ -45,7 +46,7 @@ export const GlobalState = ({children})=>{
         if(!program)return;
 
         try{
-           const getMasterAccountPk = await getMasterAccountPk();
+           const masterAccountPk = await getMasterAccountPk();
            const masterAccount  = await program.account.master.fetch(masterAccountPk);
            setMasterAccount(masterAccount);
 
@@ -53,7 +54,7 @@ export const GlobalState = ({children})=>{
             console.log("Couldn't fetch master account:",e.message)
             setMasterAccount(null);
         }
-    })
+    },[program])
 
 
     //check for masterAccount
@@ -62,7 +63,7 @@ export const GlobalState = ({children})=>{
         if(!masterAccount && program){
             fetchMasterAccount();
         }
-    },[masterAccount,program])
+    },[masterAccount,program,fetchMasterAccount])
 
     const fetchBets = useCallback(async()=>{
         if(!program)return;
@@ -82,7 +83,7 @@ export const GlobalState = ({children})=>{
 
   const createBet = useCallback(
     async(amount,price,duration, pythPriceKey)=>{
-        if(!masterAccount)return;
+        if(!masterAccount || !wallet || !program)return;
 
         try{
             const betId = masterAccount.lastBetId.addn(1);
@@ -96,7 +97,7 @@ export const GlobalState = ({children})=>{
                 player:wallet.publicKey,
             })
             .rpc()
-            await connection.confirmTransaction(txHash);
+            await retryAsync(() => connection.confirmTransaction(txHash), 3, 1000);
             console.log("Created Bet",txHash);
             toast.success("Created bet");
         }catch(e){
@@ -104,7 +105,7 @@ export const GlobalState = ({children})=>{
             console.log(e.message);
         }
     },
-    [masterAccount]
+    [masterAccount,wallet,program,connection]
   )
   
   const closeBet = useCallback(
@@ -118,6 +119,7 @@ export const GlobalState = ({children})=>{
             player:wallet.publicKey,
           })
           .rpc()
+          await retryAsync(() => connection.confirmTransaction(txHash), 3, 1000);
           toast.success("Closed bet !")
         }catch(e){
             toast.error("Failed to close bet!");
@@ -160,3 +162,15 @@ export const GlobalState = ({children})=>{
         </GlobalContext.Provider>
     )
 }
+
+const retryAsync = async (fn, retries, delay) => {
+    while (retries > 0) {
+        try {
+            await fn();
+            return;
+        } catch (err) {
+            if (--retries === 0) throw err;
+            await new Promise((resolve) => setTimeout(resolve, delay));
+        }
+    }
+};

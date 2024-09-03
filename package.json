@@ -14,7 +14,7 @@
     "@solana/wallet-adapter-react": "^0.15.24",
     "@solana/wallet-adapter-react-ui": "^0.9.22",
     "@solana/wallet-adapter-wallets": "^0.19.5",
-    "@solana/web3.js": "^1.66.2",
+    "@solana/web3.js": "^1.95.3",
     "bignumber.js": "^9.1.1",
     "chart.js": "^3.7.1",
     "magic-sdk": "^8.1.0",
